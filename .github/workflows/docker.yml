@@ -28,13 +28,22 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v3
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
 
     - name: Build and push to GitHub Container Registry
       id: docker_build
       uses: docker/build-push-action@v2
       with:
         context: .
-        tags: latest
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outpus.labels }}
         file: ./Dockerfile
         push: ${{ github.event_name != 'pull_request' }}
 
