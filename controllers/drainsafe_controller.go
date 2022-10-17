@@ -68,7 +68,8 @@ func (r *DrainSafeReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	isEnabled, err := rclient.IsEnabled("node")
 	if err != nil {
 		log.Error(err, "failed to check if repairman is enabled")
-		return ctrl.Result{RequeueAfter: 1 * time.Minute}, nil
+		isEnabled = false
+//		return ctrl.Result{RequeueAfter: 1 * time.Minute}, nil
 	}
 	if !isEnabled {
 		rclient = nil
